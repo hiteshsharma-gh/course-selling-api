@@ -4,9 +4,7 @@ declare global {
   namespace Express {
     interface Request {
       userId?: string,
-      role?: string,
+      role: "STUDENT" | "INSTRUCTOR"
     }
   }
 }
-
-export { }

@@ -20,6 +20,12 @@ export const CreateCourseSchema = z.object({
   price: z.number()
 })
 
+export const UpdateCourseSchema = z.object({
+  title: z.string().optional(),
+  description: z.string().optional(),
+  price: z.number().optional()
+})
+
 export const CreateLessonSchema = z.object({
   title: z.string(),
   content: z.string(),
