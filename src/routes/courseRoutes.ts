@@ -131,4 +131,21 @@ courseRouter.route('/:id')
     })
   })
 
+courseRouter.get('/:courseId/lessons', async (req, res) => {
+  const { courseId } = req.params
+
+  const { data, error } = await tryCatch(prisma.lesson.findMany({
+    where: {
+      courseId
+    }
+  }))
+  if (error) {
+    return res.status(500).json({
+      error: "error while finding lessons course"
+    })
+  }
+
+  return res.status(200).json(data)
+})
+
 export { courseRouter }
