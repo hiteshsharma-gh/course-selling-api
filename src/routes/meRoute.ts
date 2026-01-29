@@ -28,4 +28,43 @@ meRouter.get('/me', authMiddleware, async (req, res) => {
   }
 })
 
+meRouter.get('/users/:id/purchases', authMiddleware, async (req, res) => {
+  if (req.role !== "STUDENT") {
+    return res.status(403).json({
+      error: "only students can see their purchased courses"
+    })
+  }
+
+  const { id } = req.params
+  if (id !== req.userId) {
+    return res.status(403).json({
+      error: "students can only access their own courses"
+    })
+  }
+
+  if (id) {
+    const { data: purchases, error } = await tryCatch(prisma.purchase.findMany({
+      where: {
+        userId: id.toString()
+      },
+      select: {
+        course: true
+      }
+    }))
+    if (error) {
+      return res.status(500).json({
+        error: "error while getting purchases"
+      })
+    }
+
+    if (!purchases) {
+      return res.status(400).json({
+        message: "no purchases"
+      })
+    }
+
+    return res.status(200).json(purchases)
+  }
+})
+
 export { meRouter }

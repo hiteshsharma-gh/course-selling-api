@@ -7,13 +7,10 @@ import { env } from "../../env";
 import jwt from "jsonwebtoken"
 
 const authRouter = Router()
-console.log("here1")
 
 authRouter.post('/signup', async (req, res) => {
-  console.log("here")
   const result = SignupSchema.safeParse(req.body)
   if (!result.success) {
-    console.error("1")
     return res.status(400).json({
       error: "Invalid json"
     })
@@ -26,14 +23,12 @@ authRouter.post('/signup', async (req, res) => {
   }))
 
   if (existingUserReadError) {
-    console.error("2")
     return res.status(500).json({
       error: "error while finding user"
     })
   }
 
   if (existingUser) {
-    console.error("3")
     return res.status(409).json({
       error: "user alreadly exists"
     })
@@ -41,7 +36,6 @@ authRouter.post('/signup', async (req, res) => {
 
   const { data: hash, error: hashingError } = await tryCatch(bcrypt.hash(result.data.password, env.BCRYPT_SALT_ROUNDS))
   if (hashingError) {
-    console.error("4")
     return res.status(500).json({
       error: "error while hashing password"
     })
@@ -56,7 +50,6 @@ authRouter.post('/signup', async (req, res) => {
     }
   }))
   if (newUserCreateError) {
-    console.error("5")
     return res.status(500).json({
       error: "error while creating user"
     })
@@ -72,10 +65,8 @@ authRouter.post('/signup', async (req, res) => {
 })
 
 authRouter.post('/login', async (req, res) => {
-  console.error("login")
   const result = LoginSchema.safeParse(req.body)
   if (!result.success) {
-    console.error("6")
     return res.status(400).json({
       error: "Invalid json"
     })
@@ -87,14 +78,12 @@ authRouter.post('/login', async (req, res) => {
     }
   }))
   if (userReadError) {
-    console.error("7")
     return res.status(500).json({
       error: "error while finding user"
     })
   }
 
   if (!user) {
-    console.error("8")
     return res.status(404).json({
       error: "user doesn't exist"
     })
@@ -102,14 +91,12 @@ authRouter.post('/login', async (req, res) => {
 
   const { data: areCredentialsCorrect, error: passwordComparingError } = await tryCatch(bcrypt.compare(result.data.password, user.password))
   if (passwordComparingError) {
-    console.error("9")
     return res.status(500).json({
       error: "error while comparing password"
     })
   }
 
   if (!areCredentialsCorrect) {
-    console.error("10")
     return res.status(400).json({
       error: "Invalid credentials"
     })
@@ -117,7 +104,6 @@ authRouter.post('/login', async (req, res) => {
 
   const token = jwt.sign({ userId: user.id, role: user.role }, env.JWT_SECRET)
 
-  console.log(token)
   return res.status(200).json({ token })
 })
 
