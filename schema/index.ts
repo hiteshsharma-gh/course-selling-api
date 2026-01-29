@@ -1,10 +1,12 @@
 import { z } from 'zod'
 
+const Role = z.enum(["STUDENT", "INSTRUCTOR"])
+
 export const SignupSchema = z.object({
   email: z.email(),
   password: z.string().min(6),
   name: z.string(),
-  role: z.enum(["STUDENT", "INSTRUCTOR"])
+  role: Role
 })
 
 export const LoginSchema = z.object({
@@ -26,4 +28,9 @@ export const CreateLessonSchema = z.object({
 
 export const PurchaseCourseSchema = z.object({
   courseId: z.string()
+})
+
+export const TokenDataSchema = z.object({
+  userId: z.string(),
+  role: Role
 })
